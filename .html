@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GREEN-API Demo</title>
+    <style>
+        body {
+            font-family: Trebuchet MS, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            display: flex;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .form-section {
+            margin-right: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-group textarea {
+            resize: none;
+            height: 200px;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            background-color: #104289;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        .form-group button:hover {
+            background-color: #454ba0;
+        }
+        #response {
+            width: 400px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            height: 300px;
+            overflow-y: auto;
+        }
+        #response p {
+            margin: 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-section">
+            <div class="form-group">
+                <label for="idInstance">ID Instance:</label>
+                <input type="text" id="idInstance" placeholder="Введите ваш ID Instance">
+            </div>
+            <div class="form-group">
+                <label for="apiTokenInstance">API Token Instance:</label>
+                <input type="text" id="apiTokenInstance" placeholder="Введите ваш API Token Instance">
+            </div>
+            <div class="form-group">
+                <button onclick="getSettings()">getSettings</button>
+                <button onclick="getStateInstance()">getStateInstance</button>
+            </div>
+            <div class="form-group">
+                <input type="text" id="chatId" placeholder="77771234567">
+                <input type="text" id="message" placeholder="Hello World!">
+                <button onclick="sendMessage()">sendMessage</button>
+            </div>
+            <div class="form-group">
+                <input type="text" id="chatIdFile" placeholder="77771234567">
+                <input type="text" id="fileUrl" placeholder="https://my.site.com/img/horse.png">
+                <button onclick="sendFileByUrl()">sendFileByUrl</button>
+            </div>
+        </div>
+        <div id="response">
+            <label>Ответ:</label>
+            <p id="responseText"></p>
+        </div>
+    </div>
+
+    <script>
+        async function getSettings() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiTokenInstance').value;
+
+            if (!idInstance || !apiTokenInstance) {
+                alert('Пожалуйста, введите ID Instance и API Token Instance.');
+                return;
+            }
+
+            const url = `https://api.green-api.com/waInstance${idInstance}/getSettings/${apiTokenInstance}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                document.getElementById('responseText').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('responseText').textContent = 'Ошибка: ' + error.message;
+            }
+        }
+
+        async function getStateInstance() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiTokenInstance').value;
+
+            if (!idInstance || !apiTokenInstance) {
+                alert('Пожалуйста, введите ID Instance и API Token Instance.');
+                return;
+            }
+
+            const url = `https://api.green-api.com/waInstance${idInstance}/getStateInstance/${apiTokenInstance}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                document.getElementById('responseText').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('responseText').textContent = 'Ошибка: ' + error.message;
+            }
+        }
+
+        async function sendMessage() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiTokenInstance').value;
+            const chatId = document.getElementById('chatId').value + '@c.us';
+            const message = document.getElementById('message').value;
+
+            if (!idInstance || !apiTokenInstance || !chatId || !message) {
+                alert('Пожалуйста, заполните все поля.');
+                return;
+            }
+
+            const url = `https://api.green-api.com/waInstance${idInstance}/sendMessage/${apiTokenInstance}`;
+            const messageData = {
+                chatId: chatId,
+                message: message
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(messageData)
+                });
+                const data = await response.json();
+                document.getElementById('responseText').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('responseText').textContent = 'Ошибка: ' + error.message;
+            }
+        }
+
+        async function sendFileByUrl() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiTokenInstance').value;
+            const chatId = document.getElementById('chatIdFile').value + '@c.us';
+            const fileUrl = document.getElementById('fileUrl').value;
+
+            if (!idInstance || !apiTokenInstance || !chatId || !fileUrl) {
+                alert('Пожалуйста, заполните все поля.');
+                return;
+            }
+
+            const url = `https://api.green-api.com/waInstance${idInstance}/sendFileByUrl/${apiTokenInstance}`;
+            const fileData = {
+                chatId: chatId,
+                urlFile: fileUrl,
+                fileName: fileUrl.split('/').pop(),
+                caption: "Пример изображения"
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(fileData)
+                });
+                const data = await response.json();
+                document.getElementById('responseText').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('responseText').textContent = 'Ошибка: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
